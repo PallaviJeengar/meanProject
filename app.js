@@ -3,11 +3,26 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+var swaggerJsdoc = require("swagger-jsdoc");
+var swaggerUi = require("swagger-ui-express");
+var swaggerDocument = require("./swagger.json");
+
 var app = express();
 
 const winston=require('./utils/winston');
 // app.use(logger('combined', { stream: winston.stream }));
 winston.log("error","hello");
+
+// console.log(swaggerJsdoc(swaggerDocument));
+
+//swagger
+app.use(
+  '/api-docs',
+  swaggerUi.serve, 
+  swaggerUi.setup(swaggerJsdoc(swaggerDocument))
+);
+
 
 var indexRouter = require('./routes/index');
 
