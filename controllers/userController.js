@@ -1,7 +1,8 @@
 const userModel = require("../models/user.js");
 const bookModel = require("../models/books.js");
-const bookController=require('../controllers/bookController');
-const logger=require('../utils/winston');
+const bcrypt = require('bcrypt');
+// const bookController=require('../controllers/bookController');
+// const logger=require('../utils/winston');
 
 exports.showUsers=async (request, response) => {
     try {
@@ -17,6 +18,8 @@ exports.showUsers=async (request, response) => {
 exports.addUser=async (request, response) => {
     try {
       const user = new userModel(request.body);
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(user.password, salt);
       await user.save();
     } catch (error) {
       response.status(500).send(error);

@@ -18,6 +18,9 @@ let UserSchema = new mongoose.Schema({
     bookIssued:String,
     address:{
         type:address
+    },
+    password:{
+        type:String
     }
   });
 
