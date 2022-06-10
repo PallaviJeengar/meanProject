@@ -14,14 +14,11 @@ const winston=require('./utils/winston');
 // app.use(logger('combined', { stream: winston.stream }));
 winston.log("error","hello");
 
-// console.log(swaggerJsdoc(swaggerDocument));
+console.log(swaggerDocument.options);
+const swaggerSpec = swaggerJsdoc(swaggerDocument.options);
 
 //swagger
-app.use(
-  '/api-docs',
-  swaggerUi.serve, 
-  swaggerUi.setup(swaggerJsdoc(swaggerDocument))
-);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 var indexRouter = require('./routes/index');
