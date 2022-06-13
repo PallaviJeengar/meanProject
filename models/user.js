@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const {v4 : uuidv4} = require('uuid')
 const { injectUUID } = require("mongoose-uuid-parser");
+const jwtToken=require("../utils/jwt.js");
 injectUUID(mongoose);
 
 let address=mongoose.Schema({
