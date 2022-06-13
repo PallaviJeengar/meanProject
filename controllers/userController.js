@@ -1,8 +1,7 @@
 const userModel = require("../models/user.js");
 const bookModel = require("../models/books.js");
+const jwtToken=require("../utils/jwt.js");
 const bcrypt = require('bcrypt');
-// const bookController=require('../controllers/bookController');
-// const logger=require('../utils/winston');
 
 exports.showUsers=async (request, response) => {
     try {
@@ -17,6 +16,9 @@ exports.showUsers=async (request, response) => {
 
 exports.addUser=async (request, response) => {
     try {
+      const token = jwtToken.generateAccessToken({username: request.body.username});
+      console.log(token);
+      response.append('x-auth-token', token);
       const user = new userModel(request.body);
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(user.password, salt);

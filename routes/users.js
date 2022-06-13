@@ -29,10 +29,11 @@ var express = require('express');
 var router = express.Router();
 
 const userController=require('../controllers/userController');
+const userMiddleware=require('../middlewares/userMiddleware.js');
 
 /**
  * @swagger
- * /users:
+ * /users/user:
  *   get:
  *     summary: Retrieve a list of JSONPlaceholder users
  *     description: Retrieve a list of users from JSONPlaceholder. Can be used to populate a list of fake users when prototyping or testing an API.
@@ -47,11 +48,11 @@ const userController=require('../controllers/userController');
  *                 $ref: '#/components/schemas/User'
  */
 
-router.get('/user',userController.showUsers);
+router.get('/user',userMiddleware.authenticateToken,userController.showUsers);
 
 /**
  * @swagger
- * /user:
+ * /users/user:
  *   post:
  *     summary: Retrieve a list of JSONPlaceholder users.
  *     description: Retrieve a list of users from JSONPlaceholder.
@@ -73,7 +74,7 @@ router.post('/user',userController.addUser);
 
 /**
  * @swagger
- * /user/{id}:
+ * /users/user/{id}:
  *   patch:
  *     summary: Retrieve a list of JSONPlaceholder users.
  *     description: Retrieve a list of users from JSONPlaceholder.
@@ -98,11 +99,11 @@ router.post('/user',userController.addUser);
  *                         $ref: '#/components/schemas/User'
  *                      
  */
-router.patch('/user/:id',userController.updateUser);
+router.patch('/user/:id',userMiddleware.authenticateToken,userController.updateUser);
 
 /**
  * @swagger
- * /user/{id}:
+ * /users/user/{id}:
  *   delete:
  *     summary: Retrieve a list of JSONPlaceholder users.
  *     description: Retrieve a list of users from JSONPlaceholder.
@@ -127,11 +128,11 @@ router.patch('/user/:id',userController.updateUser);
  *                       $ref: '#/components/schemas/User'
  *                      
  */
-router.delete('/user/:id',userController.deleteUser);
+router.delete('/user/:id',userMiddleware.authenticateToken,userController.deleteUser);
 
 /**
  * @swagger
- * /user/issueBook/{id}/{uid}:
+ * /users/user/issueBook/{id}/{uid}:
  *   get:
  *     summary: Retrieve a list of JSONPlaceholder users.
  *     description: Retrieve a list of users from JSONPlaceholder.
@@ -179,6 +180,6 @@ router.delete('/user/:id',userController.deleteUser);
  *                         type: string
  *                      
  */
-router.get('/user/issueBook/:id/:uid',userController.issueBook);
+router.get('/user/issueBook/:id/:uid',userMiddleware.authenticateToken,userController.issueBook);
 
 module.exports = router;
