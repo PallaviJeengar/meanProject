@@ -48,7 +48,7 @@ const userMiddleware=require('../middlewares/userMiddleware.js');
  *                 $ref: '#/components/schemas/User'
  */
 
-router.get('/user',userMiddleware.authenticateToken,userController.showUsers);
+router.get('/user',userController.showUsers);
 
 /**
  * @swagger
@@ -99,7 +99,7 @@ router.post('/user',userController.addUser);
  *                         $ref: '#/components/schemas/User'
  *                      
  */
-router.patch('/user/:id',userMiddleware.authenticateToken,userController.updateUser);
+router.patch('/user/:id',userController.updateUser);
 
 /**
  * @swagger
@@ -180,6 +180,8 @@ router.delete('/user/:id',userMiddleware.authenticateToken,userController.delete
  *                         type: string
  *                      
  */
-router.get('/user/issueBook/:id/:uid',userMiddleware.authenticateToken,userController.issueBook);
+router.get('/user/issueBook/:id/:uid',userController.issueBook);
+
+router.post('/login',userController.verifyUser);
 
 module.exports = router;

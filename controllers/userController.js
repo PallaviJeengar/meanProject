@@ -2,10 +2,45 @@ const userModel = require("../models/user.js");
 const bookModel = require("../models/books.js");
 const jwtToken=require("../utils/jwt.js");
 const bcrypt = require('bcrypt');
+const { response } = require("../app.js");
+const { resolve } = require("app-root-path");
+
+exports.verifyUser=async (request,response) => {
+  // console.log(request.body);
+  try {
+    userModel.findOne({email:request.body.email})
+    .then(user=>{
+      if(!user)
+      {
+        response.status(404).json({error:"no user found"});
+      }
+      else
+      {
+        bcrypt.compare(request.body.password,user.password,(err,match)=>{
+          if(err)
+          {
+            response.status(500).json({error:"incorrect password"});
+          }
+          else if(match)
+          {
+            response.status(200);
+            response.json([{token:jwtToken.generateAccessToken({username: user.email})},{user:user}]);
+            response.send(user);
+          }
+          else
+          {
+            response.status(500).json(err);
+          }
+        })
+      }
+    })
+  } catch (error) {
+    
+  }
+}
 
 exports.showUsers=async (request, response) => {
     try {
-      // throw new Error("error");
       const users = await userModel.find({});
       response.send(users);
     } catch (error) {
@@ -16,7 +51,7 @@ exports.showUsers=async (request, response) => {
 
 exports.addUser=async (request, response) => {
     try {
-      const token = jwtToken.generateAccessToken({username: request.body.username});
+      const token = jwtToken.generateAccessToken({username: request.body.email});
       console.log(token);
       response.append('x-auth-token', token);
       const user = new userModel(request.body);
