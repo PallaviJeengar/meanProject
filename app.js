@@ -17,7 +17,6 @@ const winston=require('./utils/winston');
 // app.use(logger('combined', { stream: winston.stream }));
 winston.log("error","hello");
 
-console.log(swaggerDocument.options);
 const swaggerSpec = swaggerJsdoc(swaggerDocument.options);
 
 //swagger
