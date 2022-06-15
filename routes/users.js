@@ -1,6 +1,18 @@
 // routes/users.js
 
 /**
+ * components:
+ *  securitySchemes:
+ *     bearerAuth:
+ *     type: http
+ *     scheme: bearer
+ *     bearerFormat: JWT
+ */
+/**
+ * security:
+ * - bearerAuth: []  
+ */
+/**
  * @swagger
  * components:
  *   schemas:
@@ -35,6 +47,8 @@ const userMiddleware=require('../middlewares/userMiddleware.js');
  * @swagger
  * /users/user:
  *   get:
+ *     security:
+ *      - bearerAuth: []  
  *     summary: Retrieve a list of JSONPlaceholder users
  *     description: Retrieve a list of users from JSONPlaceholder. Can be used to populate a list of fake users when prototyping or testing an API.
  *     responses:
