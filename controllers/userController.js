@@ -5,43 +5,56 @@ const bcrypt = require('bcrypt');
 const { response } = require("../app.js");
 const { resolve } = require("app-root-path");
 
-exports.verifyUser=async (request,response) => {
-  
+exports.verifyUser=async (request,response) => {  
   try {
     userModel.findOne({email:request.body.email})
     .then(user=>{
       if(!user)
       {
-        response.status(404).json({error:"no user found"});
+        response.status(404).send({
+          'code':-1,
+          'message':"no user found"
+        })
       }
       else
       {
         bcrypt.compare(request.body.password,user.password,(err,match)=>{
           if(err)
           {
-            response.status(500).json({error:"incorrect password"});
+            response.status(500).send({
+              'code':-1,
+              'message':"incorrect password"
+            });
           }
           else if(match)
           {
-            response.status(200);
-            response.json([{token:jwtToken.generateAccessToken({username: user.email})},{user:user}]);
-            response.send(user);
+            const token=jwtToken.generateAccessToken({username: user.email});
+            response.status(200).send(
+              {
+                "token":`${token}`,
+                "user":`${user}`
+              }
+            );
           }
           else
           {
-            response.status(500).json(err);
+            response.status(500).send({
+              'code':-1,
+              'message':"incorrect password"
+            });
           }
         })
       }
     })
   } catch (error) {
-    
+    // response.status(500).send();
   }
 }
 
 exports.showUsers=async (request, response) => {
     try {
       const users = await userModel.find({});
+      // throw new Error();
       response.send(users);
     } catch (error) {
       response.status(500).send(error);
@@ -57,29 +70,42 @@ exports.addUser=async (request, response) => {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(user.password, salt);
       await user.save();
+      response.send({'code':0,'message':"user added successfully"});
     } catch (error) {
       response.status(500).send(error);
     }
-    response.send({'code':0,'message':"user added successfully"});
 };
 
 exports.updateUser=async (request,response)=>{
     try {
-        await userModel.findByIdAndUpdate(request.params.id, request.body);
-        await userModel.save();
+        const user= await userModel.findByIdAndUpdate(request.params.id, request.body);
+        if (!user) {
+          response.status(404).send({
+            'code':-1,
+            'message':"user not found"
+          })
+          response.end();
+        }
+        else{
+          await user.save();
+        response.send({'code':0,'message':"user updated successfully"});
+        }
       } catch (error) {
         response.status(500).send(error);
       }
-      response.send({'code':0,'message':"user updated successfully"});
 };
 
 exports.deleteUser=async (request,response)=>{
     try {
         const user = await userModel.findByIdAndDelete(request.params.id);
+        if (!user) {
+          response.status(404).send({
+            'code':-1,
+            'message':"no user found"
+          })};
       } catch (error) {
         response.status(500).send(error);
       }
-      if (!user) response.status(404).send("No item found");
       response.status(200).send();
 };
 
@@ -103,7 +129,5 @@ exports.issueBook=async (request,response)=>{
     } catch (error) {
       response.status(500).send(error);
     }
-
-    response.send({'code':0,'message':"book issued successfully"});
-    response.status(200).send();
+    response.status(200).send({'code':0,'message':"book issued successfully"});
 };

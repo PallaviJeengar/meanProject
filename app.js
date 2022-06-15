@@ -11,6 +11,7 @@ var swaggerDocument = require("./swagger.json");
 const jwt = require('jsonwebtoken');
 const auth=require('./middlewares/userMiddleware.js')
 
+
 var app = express();
 
 const winston=require('./utils/winston');
@@ -39,6 +40,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+// app.use('/users',userRoutes);
 app.use('/users', [ auth.authenticateToken, userRoutes]);
 app.use('/books',bookRoutes);
 
